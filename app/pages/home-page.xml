@@ -1,0 +1,59 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" 
+      xmlns:dt="@nativescript/datetimepicker"
+      navigatingTo="navigatingTo" 
+      actionBarHidden="false">
+    
+    <ActionBar title="SMS Reader" class="bg-blue-500 text-white">
+        <NavigationButton visibility="collapsed" />
+        <ActionItem ios.position="right" tap="{{ onSettings }}">
+            <FormattedString>
+                <Span text="&#xf013;" class="fa text-lg" />
+            </FormattedString>
+        </ActionItem>
+    </ActionBar>
+
+    <GridLayout rows="auto, *">
+        <!-- Main Content -->
+        <StackLayout row="0" class="p-4 form-section animate-fade-in">
+            <Label text="Select Start Date" class="label" />
+            <GridLayout columns="*, auto" class="mb-4">
+                <dt:DateTimePicker col="0" date="{{ fromDate }}" class="input-field" />
+                <Button col="1" text="Today" tap="{{ setToday }}" class="btn-outline ml-2 px-3" />
+            </GridLayout>
+            
+            <Button text="Read SMS Messages" tap="{{ readSmsMessages }}" 
+                    class="btn btn-primary mb-4 animate-fade-in delay-100" 
+                    isEnabled="{{ !isLoading }}" />
+                    
+            <GridLayout rows="auto" columns="*, *" class="mb-2" visibility="{{ isLoading ? 'visible' : 'collapsed' }}">
+                <ActivityIndicator rowSpan="1" colSpan="2" busy="{{ isLoading }}" class="m-2" />
+            </GridLayout>
+        </StackLayout>
+        
+        <!-- Messages List -->
+        <GridLayout row="1" class="animate-fade-in delay-150">
+            <ListView items="{{ messages }}" class="list-group" itemTap="{{ onItemTap }}" 
+                     visibility="{{ messages.length > 0 ? 'visible' : 'collapsed' }}">
+                <ListView.itemTemplate>
+                    <GridLayout columns="*, auto" class="card animate-fade-in">
+                        <StackLayout col="0">
+                            <Label text="{{ sender }}" class="text-base font-medium text-gray-800" textWrap="true" />
+                            <Label text="{{ content }}" class="text-sm text-gray-600 mt-1" textWrap="true" />
+                            <Label text="{{ date, 'MM/dd/yyyy hh:mm a' | dateConverter }}" class="text-xs text-gray-500 mt-1" />
+                        </StackLayout>
+                        <Label col="1" text="{{ statusIcon }}" class="text-lg {{ statusClass }}" verticalAlignment="top" />
+                    </GridLayout>
+                </ListView.itemTemplate>
+            </ListView>
+            
+            <!-- Empty State -->
+            <StackLayout verticalAlignment="center" horizontalAlignment="center" 
+                        visibility="{{ messages.length === 0 && !isLoading ? 'visible' : 'collapsed' }}" 
+                        class="p-6 text-center animate-fade-in delay-100">
+                <Label text="&#xf4ad;" class="fa text-6xl text-gray-300 mb-4" />
+                <Label text="No Messages Found" class="text-xl text-gray-800" />
+                <Label text="Select a date and tap 'Read SMS Messages' to get started." class="text-sm text-gray-600 mt-2" textWrap="true" />
+            </StackLayout>
+        </GridLayout>
+    </GridLayout>
+</Page>
